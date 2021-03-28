@@ -1,41 +1,37 @@
-class Solution {
-    public Node copyRandomList(Node head) {
-        if(head == null) return null;
-        Node currentNode = head, next;
+import java.util.HashSet;
 
-        // First round: make copy of each node,
-        // and link them together side-by-side in a single list.
-        while (currentNode != null) {
-            next = currentNode.next;
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if(headA == null || headB == null) return null;
+        int ALength = countLength(headA);
+        int BLength = countLength(headB);
 
-            Node copy = new Node(currentNode.val);
-            currentNode.next = copy;
-            copy.next = next;
+        ListNode currentA = headA;
+        ListNode currentB = headB;
 
-            currentNode = next;
-        }
-
-        // Second round: assign random pointers for the copy nodes.
-        currentNode = head;
-        while (currentNode != null) {
-            if (currentNode.random != null) {
-                currentNode.next.random = currentNode.random.next;
+        if(ALength > BLength) {
+            for (int i = 0; i < ALength-BLength; i++) {
+                headA = headA.next;
             }
-            currentNode = currentNode.next.next;
         }
-
-        // Third round: restore the original list, and extract the copy list.
-        currentNode = head;
-        Node pseudoHead = new Node(0);
-        Node copy;
-        pseudoHead.next = head.next;
-        while (currentNode != null) {
-            copy = currentNode.next;
-            currentNode.next = copy.next;
-            if(copy.next != null) copy.next = copy.next.next;
-            currentNode = currentNode.next;
-
+        if(BLength > ALength) {
+            for (int i = 0; i < BLength-ALength; i++) {
+                headB = headB.next;
+            }
         }
-        return pseudoHead.next;
+        while (headA != headB) {
+            headA=headA.next;
+            headB=headB.next;
+        }
+        return headA;
+    }
+
+    private int countLength(ListNode head) {
+        int length = 0;
+        while (head != null) {
+            length++;
+            head = head.next;
+        }
+        return length;
     }
 }
